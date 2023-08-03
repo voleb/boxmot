@@ -7,6 +7,7 @@ import torch
 from boxmot.tracker_zoo import create_tracker
 from boxmot.utils import EXAMPLES, ROOT, WEIGHTS
 from boxmot.utils.checks import TestRequirements
+from boxmot.utils.torch_utils import select_device
 from examples.detectors import get_yolo_inferer
 
 __tr = TestRequirements()
@@ -80,6 +81,7 @@ def run(args):
         )
         yolo.predictor.model = model
 
+    yolo.predictor.args.device = select_device(args.device)
     yolo.predictor.args.project = args.project
     yolo.predictor.args.name = args.name
     yolo.predictor.args.exist_ok = args.exist_ok
