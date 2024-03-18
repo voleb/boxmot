@@ -190,7 +190,7 @@ class BaseTracker(object):
         
         if centers :
             centers = np.array(centers)
-            hist, xedges, yedges = np.histogram2d(centers[:,0], centers[:,1], bins=500, range=[[0, img.shape[1]], [0, img.shape[0]]])
+            hist, xedges, yedges = np.histogram2d(centers[:,1], centers[:,0], bins=[int(img.shape[0] / 50), int(img.shape[1] / 50)], range=[[0, img.shape[0]], [0, img.shape[1]]])
             
             # Normalize the histogram data
             hist_normalized = cv.normalize(hist, None, alpha=0, beta=255, norm_type=cv.NORM_MINMAX)
