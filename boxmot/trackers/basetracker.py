@@ -178,5 +178,35 @@ class BaseTracker(object):
                         if show_trajectories:
                             img = self.plot_trackers_trajectories(img, a.history_observations, a.id)
                 
+        img = self.plot_heatmap(img)
         return img
+    
 
+    def plot_heatmap(self, img: np.ndarray):
+        centers = []
+        for a in self.active_tracks:
+            for o in a.history_observations:
+                centers.append((int((o[0] + o[2]) / 2), int((o[1] + o[3]) / 2)))
+        
+        if centers :
+            centers = np.array(centers)
+            hist, xedges, yedges = np.histogram2d(centers[:,0], centers[:,1], bins=500, range=[[0, img.shape[1]], [0, img.shape[0]]])
+            
+            # Normalize the histogram data
+            hist_normalized = cv.normalize(hist, None, alpha=0, beta=255, norm_type=cv.NORM_MINMAX)
+
+            # Apply a colormap to generate a heatmap
+            heatmap = cv.applyColorMap(hist_normalized.astype(np.uint8), cv.COLORMAP_JET)
+
+            # Resize heatmap to match the image dimensions
+            heatmap_resized = cv.resize(heatmap, (img.shape[1], img.shape[0]))
+
+            # Overlay the heatmap on the image
+            # The weights can be adjusted to change the visibility of the heatmap vs. the original image
+            alpha = 0.5  # Transparency factor for the heatmap
+            overlay = cv.addWeighted(img, 1 - alpha, heatmap_resized, alpha, 0)
+            print(overlay.shape)
+
+            return overlay
+        
+        return img
