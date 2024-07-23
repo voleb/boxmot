@@ -73,14 +73,14 @@ joblib = "^1.3.2"
 
 
 [[tool.poetry.source]]
-name = "torchcpu"
-url = "https://download.pytorch.org/whl/cpu"
-priority = "explicit"
+#name = "torchcpu"
+#url = "https://download.pytorch.org/whl/cpu"
+#priority = "explicit"
 
 [[tool.poetry.source]]
-name = "torch_cuda121"
-url = "https://download.pytorch.org/whl/cu121"
-priority = "explicit"
+#name = "torch_cuda121"
+#url = "https://download.pytorch.org/whl/cu121"
+#priority = "explicit"
 
 
 [build-system]
