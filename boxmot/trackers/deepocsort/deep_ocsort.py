@@ -127,6 +127,10 @@ class KalmanBoxTracker(object):
 
         self.frozen = False
 
+        # box center for trajectory display
+        self.centroidarr = []
+        self.centroidarr.append(self.kf.x[:2])
+
     def update(self, det):
         """
         Updates the state vector with observed bbox.
@@ -164,6 +168,9 @@ class KalmanBoxTracker(object):
             self.hit_streak += 1
 
             self.kf.update(self.bbox_to_z_func(bbox))
+            
+            # box center for trajectory display
+            self.centroidarr.append((self.kf.x[0],self.kf.x[1]))
         else:
             self.kf.update(det)
             self.frozen = True
@@ -273,6 +280,9 @@ class DeepOCSort(BaseTracker):
         self.embedding_off = embedding_off
         self.cmc_off = cmc_off
         self.aw_off = aw_off
+
+    def getTrackers(self,):
+        return self.active_tracks
 
     @PerClassDecorator
     def update(self, dets: np.ndarray, img: np.ndarray, embs: np.ndarray = None) -> np.ndarray:

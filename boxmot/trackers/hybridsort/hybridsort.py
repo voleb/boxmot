@@ -199,6 +199,10 @@ class KalmanBoxTracker(object):
         # momentum of embedding update
         self.alpha = alpha
 
+        # box center for trajectory display
+        self.centroidarr = []
+        self.centroidarr.append(self.kf.x[:2])
+
     # ReID. for update embeddings during tracking
     def update_features(self, feat, score=-1):
         feat /= np.linalg.norm(feat)
@@ -295,6 +299,9 @@ class KalmanBoxTracker(object):
                     self.update_features(id_feature)
             self.confidence_pre = self.confidence
             self.confidence = bbox[4]
+            
+            # box center for trajectory display
+            self.centroidarr.append((self.kf.x[0],self.kf.x[1]))
         else:
             self.kf.update(bbox)
             self.confidence_pre = None
@@ -371,6 +378,9 @@ class HybridSORT(BaseTracker):
             weights=reid_weights, device=device, half=half
         ).model
         self.cmc = get_cmc_method('ecc')()
+
+    def getTrackers(self,):
+        return self.active_tracks
 
     def camera_update(self, trackers, warp_matrix):
         for tracker in trackers:

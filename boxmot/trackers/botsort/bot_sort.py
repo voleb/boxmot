@@ -40,6 +40,10 @@ class STrack(BaseTrack):
         self.features = deque([], maxlen=feat_history)
         self.alpha = 0.9
 
+        # box center for trajectory display
+        self.centroidarr = []
+        self.centroidarr.append(self.xywh[:2])
+
     def update_features(self, feat):
         feat /= np.linalg.norm(feat)
         self.curr_feat = feat
@@ -172,6 +176,9 @@ class STrack(BaseTrack):
         self.cls = new_track.cls
         self.det_ind = new_track.det_ind
         self.update_cls(new_track.cls, new_track.conf)
+        
+        # box center for trajectory display
+        self.centroidarr.append((self.mean[0],self.mean[1]))
 
     @property
     def xyxy(self):
@@ -231,6 +238,9 @@ class BoTSORT(BaseTracker):
 
         self.cmc = SOF()
         self.fuse_first_associate = fuse_first_associate
+
+    def getTrackers(self,):
+        return self.active_tracks
 
     @PerClassDecorator
     def update(self, dets: np.ndarray, img: np.ndarray, embs: np.ndarray = None) -> np.ndarray:

@@ -5,7 +5,7 @@
 """
 import numpy as np
 from collections import deque
-
+from loguru import logger
 
 from boxmot.motion.kalman_filters.xysr_kf import KalmanFilterXYSR
 from boxmot.utils.association import associate, linear_assignment
@@ -123,6 +123,10 @@ class KalmanBoxTracker(object):
         self.velocity = None
         self.delta_t = delta_t
 
+        # box center for trajectory display
+        self.centroidarr = []
+        self.centroidarr.append(self.kf.x[:2])
+
     def update(self, bbox, cls, det_ind):
         """
         Updates the state vector with observed bbox.
@@ -157,6 +161,9 @@ class KalmanBoxTracker(object):
             self.hits += 1
             self.hit_streak += 1
             self.kf.update(xyxy2xysr(bbox))
+            
+            # box center for trajectory display
+            self.centroidarr.append((self.kf.x[0],self.kf.x[1]))
         else:
             self.kf.update(bbox)
 
@@ -214,6 +221,9 @@ class OCSort(BaseTracker):
         self.Q_xy_scaling = Q_xy_scaling
         self.Q_s_scaling = Q_s_scaling
         KalmanBoxTracker.count = 0
+
+    def getTrackers(self,):
+        return self.active_tracks
 
     @PerClassDecorator
     def update(self, dets: np.ndarray, img: np.ndarray, embs: np.ndarray = None) -> np.ndarray:

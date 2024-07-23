@@ -28,6 +28,10 @@ class STrack(BaseTrack):
         self.is_activated = False
         self.tracklet_len = 0
         self.history_observations = deque([], maxlen=self.max_obs)
+        
+        # box center for trajectory display
+        self.centroidarr = []
+        self.centroidarr.append(self.xywh[:2])
 
     def predict(self):
         mean_state = self.mean.copy()
@@ -101,6 +105,9 @@ class STrack(BaseTrack):
         self.conf = new_track.conf
         self.cls = new_track.cls
         self.det_ind = new_track.det_ind
+        
+        # box center for trajectory display
+        self.centroidarr.append((self.mean[0],self.mean[1]))
 
     @property
     def xyxy(self):
@@ -140,6 +147,9 @@ class BYTETracker(BaseTracker):
         self.buffer_size = int(frame_rate / 30.0 * track_buffer)
         self.max_time_lost = self.buffer_size
         self.kalman_filter = KalmanFilterXYAH()
+
+    def getTrackers(self,):
+        return self.active_tracks
 
     @PerClassDecorator
     def update(self, dets: np.ndarray, img: np.ndarray = None, embs: np.ndarray = None) -> np.ndarray:
