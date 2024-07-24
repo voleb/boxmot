@@ -42,6 +42,9 @@ class StrongSORT(object):
         )
         self.cmc = get_cmc_method('ecc')()
 
+    def getTrackers(self,):
+        return self.tracker.tracks
+
     @PerClassDecorator
     def update(self, dets: np.ndarray, img: np.ndarray, embs: np.ndarray = None) -> np.ndarray:
         assert isinstance(

@@ -97,6 +97,10 @@ class Track:
         self.kf = KalmanFilterXYAH()
         self.mean, self.covariance = self.kf.initiate(self.bbox)
 
+        # box center for trajectory display
+        self.centroidarr = []
+        self.centroidarr.append(self.mean[:2])
+
     def to_tlwh(self):
         """Get current position in bounding box format `(top left x, top left y,
         width, height)`.
@@ -177,6 +181,9 @@ class Track:
         self.time_since_update = 0
         if self.state == TrackState.Tentative and self.hits >= self._n_init:
             self.state = TrackState.Confirmed
+
+        # box center for trajectory display
+        self.centroidarr.append((self.mean[0],self.mean[1]))
 
     def mark_missed(self):
         """Mark this track as missed (no association at the current time step)."""
